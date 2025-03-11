@@ -127,9 +127,7 @@ const App = () => {
                 formulaR1C1: range.formulasR1C1[row][col],
                 address: cellAddress,
                 rowIndex: row,
-                columnIndex: col,
-                numberFormat: range.numberFormat[row][col],
-                backgroundColor: cellFill.color,
+                columnIndex: col,                
                 format: {
                   font: {
                     name: cellFont.name,
@@ -139,6 +137,8 @@ const App = () => {
                     underline: cellFont.underline,
                     color: cellFont.color,
                   },
+                  numberFormat: range.numberFormat[row][col],
+                  backgroundColor: cellFill.color,
                 },
               };
               worksheetData.cells[cellAddress] = cellData;
