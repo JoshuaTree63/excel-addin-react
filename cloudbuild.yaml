@@ -18,5 +18,9 @@ steps:
       - '--region=us-central1'
       - '--allow-unauthenticated'
 
+options:
+  default_logs_bucket_behavior: 'REGIONAL_USER_OWNED_BUCKET'
+  logging: 'CLOUD_LOGGING_ONLY'
+
 images:
   - 'gcr.io/$PROJECT_ID/excel-addin-react'
