@@ -1,20 +1,19 @@
+options:
+  logging: CLOUD_LOGGING_ONLY  
+  logs_bucket: projects/newprojets-454820/locations/us-central1/triggers/0907b436-66f7-431a-a809-877b2ab7419d # Specify a bucket where logs will be stored
+
 steps:
   - name: 'gcr.io/cloud-builders/npm'
     args: ['install']
   - name: 'gcr.io/cloud-builders/npm'
     args: ['run', 'build']
-  - name: 'gcr.io/buildpacks/builder'
-    args: [
-      'pack', 'build', 'gcr.io/$PROJECT_ID/excel-addin-react',
-      '--builder', 'gcr.io/buildpacks/builder:v1'
-    ]
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
-      - 'run'
-      - 'deploy'
-      - 'excel-addin-react'
-      - '--image=gcr.io/$PROJECT_ID/excel-addin-react'
-      - '--platform=managed'
-      - '--region=us-central1'
-      - '--allow-unauthenticated'
+      - run
+      - deploy
+      - excel-addin-react
+      - --image=gcr.io/$PROJECT_ID/excel-addin-react
+      - --platform=managed
+      - --region=us-central1
+      - --allow-unauthenticated
