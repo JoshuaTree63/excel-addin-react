@@ -1,16 +1,13 @@
 steps:
   - name: 'gcr.io/cloud-builders/npm'
     args: ['install']
-
   - name: 'gcr.io/cloud-builders/npm'
     args: ['run', 'build']
-
   - name: 'gcr.io/buildpacks/builder'
     args: [
       'pack', 'build', 'gcr.io/$PROJECT_ID/excel-addin-react',
       '--builder', 'gcr.io/buildpacks/builder:v1'
     ]
-
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
