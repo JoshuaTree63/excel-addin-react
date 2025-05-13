@@ -6,9 +6,9 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Remote Processor" />
   <Description DefaultValue="A template to get started."/>
-  <IconUrl DefaultValue="https://upworkjoshua.z6.web.core.windows.net/assets/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="https://upworkjoshua.z6.web.core.windows.net/assets/icon-64.png"/>
-  <SupportUrl DefaultValue="https://upworkjoshua.z6.web.core.windows.net/help"/>
+  <IconUrl DefaultValue="https://localhost:3000/assets/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-64.png"/>
+  <SupportUrl DefaultValue="https://localhost:3000/help"/>
   <AppDomains>
     <AppDomain>https://www.contoso.com</AppDomain>
   </AppDomains>
@@ -16,7 +16,7 @@
     <Host Name="Workbook"/>
   </Hosts>
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://upworkjoshua.z6.web.core.windows.net/taskpane.html"/>
+    <SourceLocation DefaultValue="https://localhost:3000/taskpane.html"/>
   </DefaultSettings>
   <Permissions>ReadWriteDocument</Permissions>
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
@@ -62,14 +62,14 @@
     </Hosts>
     <Resources>
       <bt:Images>
-        <bt:Image id="Icon.16x16" DefaultValue="https://upworkjoshua.z6.web.core.windows.net/assets/icon-16.png"/>
-        <bt:Image id="Icon.32x32" DefaultValue="https://upworkjoshua.z6.web.core.windows.net/assets/icon-32.png"/>
-        <bt:Image id="Icon.80x80" DefaultValue="https://upworkjoshua.z6.web.core.windows.net/assets/icon-80.png"/>
+        <bt:Image id="Icon.16x16" DefaultValue="https://localhost:3000/assets/icon-16.png"/>
+        <bt:Image id="Icon.32x32" DefaultValue="https://localhost:3000/assets/icon-32.png"/>
+        <bt:Image id="Icon.80x80" DefaultValue="https://localhost:3000/assets/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
         <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://go.microsoft.com/fwlink/?LinkId=276812"/>
-        <bt:Url id="Commands.Url" DefaultValue="https://upworkjoshua.z6.web.core.windows.net/commands.html"/>
-        <bt:Url id="Taskpane.Url" DefaultValue="https://upworkjoshua.z6.web.core.windows.net/taskpane.html"/>
+        <bt:Url id="Commands.Url" DefaultValue="https://localhost:3000/commands.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://excel-addin-react-472580644224.me-west1.run.app/taskpane.html"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="GetStarted.Title" DefaultValue="Get started with your sample add-in!"/>

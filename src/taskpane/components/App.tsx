@@ -122,8 +122,6 @@ const App = () => {
               await context.sync();
 
               const cellData = {
-                value: range.values[row][col],
-                formula: range.formulas[row][col],
                 formulaR1C1: range.formulasR1C1[row][col],
                 address: cellAddress,
                 rowIndex: row,
@@ -270,7 +268,7 @@ const App = () => {
           </div>
           <div className={styles.inputContainer}>
             <div className={styles.inputWrapper}>
-              <Label htmlFor={inputId}>Param 1</Label>
+              <Label htmlFor={inputId}>first param</Label>
               <Input required id={inputId} name="param_1" />
             </div>
             <div className={styles.inputWrapper}>
