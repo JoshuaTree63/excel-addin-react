@@ -1,41 +1,86 @@
 import * as React from "react";
-import { Input, Label, useId, makeStyles, Button, Textarea, Spinner } from "@fluentui/react-components";
+import { 
+  Input, 
+  Label, 
+  useId, 
+  makeStyles, 
+  Button, 
+  Textarea, 
+  Spinner, 
+  TabList, 
+  Tab, 
+  tokens, 
+  Card, 
+  Title3, 
+  Text,
+  ProgressBar
+} from "@fluentui/react-components";
 import { getCellAddress } from "../taskpane";
 import { useState } from "react";
 
 const useStyles = makeStyles({
   root: {
-    backgroundColor: "#f4f4f4",
+    backgroundColor: "#ffffff",
     minHeight: "100vh",
     display: "flex",
-    justifyContent: "center",
     flexDirection: "column",
+    padding: "16px",
+  },
+  header: {
+    marginBottom: "16px",
+  },
+  tabContainer: {
+    marginBottom: "16px",
   },
   form: {
     display: "flex",
     flexDirection: "column",
-    gap: "5px",
-    padding: "10px",
+    gap: "16px",
+    width: "100%",
+  },
+  card: {
+    padding: "16px",
+    marginBottom: "16px",
   },
   inputContainer: {
     display: "flex",
     flexDirection: "row",
-    margin: "auto",
-    gap: "10px",
+    gap: "12px",
+    width: "100%",
   },
   inputWrapper: {
     display: "flex",
     flexDirection: "column",
+    width: "100%",
+    gap: "4px",
   },
   formContent: {
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
+    gap: "16px",
+    width: "100%",
   },
+  buttonContainer: {
+    marginTop: "16px",
+  },
+  errorMessage: {
+    color: tokens.colorPaletteRedForeground1,
+    fontSize: tokens.fontSizeBase200,
+    marginTop: "8px",
+  },
+  progressContainer: {
+    marginTop: "16px",
+  },
+  progressText: {
+    fontSize: tokens.fontSizeBase200,
+    marginBottom: "8px",
+  }
 });
 
 const App = () => {
   const styles = useStyles();
+  const [selectedTab, setSelectedTab] = useState("read");
+  
   // Read section
   const inputId = useId("input");
   const inputId2 = useId("input");
@@ -46,6 +91,11 @@ const App = () => {
   const [isReadLoading, setIsReadLoading] = useState(false);
   const [readErrorMessage, setReadErrorMessage] = useState<string>();
   const sheetPercent = worksheetRows > 0 ? ((processedRows / worksheetRows) * 100).toFixed(2) : 0;
+
+  // Write section
+  const textAreaId = useId("textarea");
+  const [isWriteLoading, setIsWriteLoading] = useState(false);
+  const [writeErrorMessage, setWriteErrorMessage] = useState<string>();
 
   const incrementProcessedRows = () => {
     setProcessedRows((state) => state + 1);
@@ -163,22 +213,22 @@ const App = () => {
     const param2 = formData.get("param_2");
     const targetUrl = formData.get("targetUrl");
 
-    const workbook = await readWorkbook();
+    try {
+      const workbook = await readWorkbook();
 
-    await fetch(targetUrl as string, {
-      method: "POST",
-      body: JSON.stringify({
-        worksheets: workbook,
-        params: { param1, param2 },
-      }),
-    });
-    setIsReadLoading(false);
+      await fetch(targetUrl as string, {
+        method: "POST",
+        body: JSON.stringify({
+          worksheets: workbook,
+          params: { param1, param2 },
+        }),
+      });
+    } catch (error) {
+      setReadErrorMessage(error.message || "An error occurred during the read operation");
+    } finally {
+      setIsReadLoading(false);
+    }
   };
-
-  // Write section
-  const textAreaId = useId("textarea");
-  const [isWriteLoading, setIsWriteLoading] = useState(false);
-  const [writeErrorMessage, setWriteErrorMessage] = useState<string>();
 
   const writeWorkbook = async (jsonData: any) => {
     await Excel.run(async (context) => {
@@ -250,54 +300,136 @@ const App = () => {
 
   const handleSubmitWrite = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsWriteLoading(true);
+    setWriteErrorMessage("");
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const textArea = formData.get("textArea");
-    const jsonData = JSON.parse(textArea as string);
-    await writeWorkbook(jsonData);
-    setIsWriteLoading(false);
+    
+    try {
+      const formData = new FormData(e.currentTarget);
+      const textArea = formData.get("textArea");
+      const jsonData = JSON.parse(textArea as string);
+      await writeWorkbook(jsonData);
+    } catch (error) {
+      setWriteErrorMessage(error.message || "An error occurred during the write operation");
+    } finally {
+      setIsWriteLoading(false);
+    }
   };
 
   return (
     <div className={styles.root}>
-      <form className={styles.form} onSubmit={handleSubmitRead}>
-        <div className={styles.formContent}>
-          <div className={styles.inputWrapper}>
-            <Label htmlFor={targetUrlId}>Target URL</Label>
-            <Input required id={targetUrlId} name="targetUrl" />
-          </div>
-          <div className={styles.inputContainer}>
-            <div className={styles.inputWrapper}>
-              <Label htmlFor={inputId}>first param</Label>
-              <Input required id={inputId} name="param_1" />
+      <div className={styles.header}>
+        <Title3>ProJets</Title3>
+      </div>
+      
+      <div className={styles.tabContainer}>
+        <TabList selectedValue={selectedTab} onTabSelect={(_, data) => setSelectedTab(data.value as string)}>
+          <Tab value="read">Read Data</Tab>
+          <Tab value="write">Write Data</Tab>
+        </TabList>
+      </div>
+      
+      {selectedTab === "read" && (
+        <Card className={styles.card}>
+          <form className={styles.form} onSubmit={handleSubmitRead}>
+            <div className={styles.formContent}>
+              <div className={styles.inputWrapper}>
+                <Label htmlFor={targetUrlId}>Target URL</Label>
+                <Input 
+                  required 
+                  id={targetUrlId} 
+                  name="targetUrl" 
+                  placeholder="https://your-api-endpoint.com/data"
+                />
+              </div>
+              
+              <div className={styles.inputContainer}>
+                <div className={styles.inputWrapper}>
+                  <Label htmlFor={inputId}>Parameter 1</Label>
+                  <Input 
+                    required 
+                    id={inputId} 
+                    name="param_1" 
+                    placeholder="Enter first parameter"
+                  />
+                </div>
+                <div className={styles.inputWrapper}>
+                  <Label htmlFor={inputId2}>Parameter 2</Label>
+                  <Input 
+                    required 
+                    id={inputId2} 
+                    name="param_2" 
+                    placeholder="Enter second parameter"
+                  />
+                </div>
+              </div>
+              
+              <div className={styles.buttonContainer}>
+                <Button 
+                  type="submit" 
+                  appearance="primary" 
+                  disabled={isReadLoading}
+                >
+                  {isReadLoading ? "Processing..." : "Read Workbook Data"}
+                </Button>
+              </div>
+              
+              {isReadLoading && (
+                <div className={styles.progressContainer}>
+                  <Text className={styles.progressText}>
+                    Processing Sheet {currentWorksheet}: {processedRows} of {worksheetRows} rows ({sheetPercent}%)
+                  </Text>
+                  <ProgressBar value={Number(sheetPercent) / 100} />
+                </div>
+              )}
+              
+              {readErrorMessage && (
+                <Text className={styles.errorMessage}>{readErrorMessage}</Text>
+              )}
             </div>
-            <div className={styles.inputWrapper}>
-              <Label htmlFor={inputId2}>Param 2</Label>
-              <Input required id={inputId2} name="param_2" />
+          </form>
+        </Card>
+      )}
+      
+      {selectedTab === "write" && (
+        <Card className={styles.card}>
+          <form className={styles.form} onSubmit={handleSubmitWrite}>
+            <div className={styles.formContent}>
+              <div className={styles.inputWrapper}>
+                <Label htmlFor={textAreaId}>JSON Data</Label>
+                <Textarea 
+                  resize="vertical" 
+                  required 
+                  id={textAreaId} 
+                  name="textArea" 
+                  placeholder="Paste your JSON data here..."
+                  style={{ minHeight: "200px" }}
+                />
+              </div>
+              
+              <div className={styles.buttonContainer}>
+                <Button 
+                  type="submit" 
+                  appearance="primary" 
+                  disabled={isWriteLoading}
+                >
+                  {isWriteLoading ? (
+                    <>
+                      <Spinner size="tiny" style={{ marginRight: "8px" }} />
+                      Writing Data...
+                    </>
+                  ) : (
+                    "Write to Workbook"
+                  )}
+                </Button>
+              </div>
+              
+              {writeErrorMessage && (
+                <Text className={styles.errorMessage}>{writeErrorMessage}</Text>
+              )}
             </div>
-          </div>
-          <Button type="submit" appearance="primary" disabled={isReadLoading}>
-            {isReadLoading ? (
-              <span>
-                &nbsp;{sheetPercent}%&nbsp;of&nbsp;sheet&nbsp;{currentWorksheet}
-              </span>
-            ) : (
-              "Run"
-            )}
-          </Button>
-          <span className="">{readErrorMessage}</span>
-        </div>
-      </form>
-      <form className={styles.form} onSubmit={handleSubmitWrite}>
-        <div className={styles.inputWrapper}>
-          <Label htmlFor={targetUrlId}>JSON</Label>
-          <Textarea resize="both" required id={textAreaId} name="textArea" />
-        </div>
-        <Button type="submit" appearance="primary" disabled={isWriteLoading}>
-          {isWriteLoading ? <Spinner /> : "Run"}
-        </Button>
-        <span className="">{writeErrorMessage}</span>
-      </form>
+          </form>
+        </Card>
+      )}
     </div>
   );
 };
