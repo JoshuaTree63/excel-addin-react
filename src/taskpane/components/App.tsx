@@ -22,10 +22,13 @@ import { useState } from "react";
 // ProJets brand color
 const brandColor = "#4B0DFF";
 const accentColor = "#FF6B00"; // Orange accent color from the image
+const backgroundColor = "#2D2D2D"; // Dark gray background
+const cardColor = "#3D3D3D"; // Slightly lighter gray for cards
+const inputColor = "#4D4D4D"; // Even lighter gray for inputs
 
 const useStyles = makeStyles({
   root: {
-    backgroundColor: "#000000",
+    backgroundColor: backgroundColor,
     color: "#ffffff",
     minHeight: "100vh",
     display: "flex",
@@ -65,7 +68,7 @@ const useStyles = makeStyles({
     padding: "16px",
     marginBottom: "16px",
     borderTop: `3px solid ${brandColor}`,
-    backgroundColor: "#121212",
+    backgroundColor: cardColor,
     color: "#ffffff",
   },
   inputContainer: {
@@ -84,9 +87,9 @@ const useStyles = makeStyles({
     color: "#ffffff",
   },
   input: {
-    backgroundColor: "#333333",
+    backgroundColor: inputColor,
     color: "#ffffff",
-    ...shorthands.border("1px", "solid", "#555555"),
+    ...shorthands.border("1px", "solid", "#666666"),
     ":focus-within": {
       ...shorthands.border("1px", "solid", brandColor),
     },
