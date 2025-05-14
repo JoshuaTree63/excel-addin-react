@@ -11,7 +11,7 @@
     <title>ProJets</title>
 
     <!-- Office JavaScript API -->
-    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js" async defer></script>
     
     <style>
         :root {
@@ -66,6 +66,13 @@
                 left: 100%;
             }
         }
+
+        #tridentmessage {
+            display: none;
+            padding: 20px;
+            background-color: #000;
+            color: #fff;
+        }
     </style>
 </head>
 
@@ -73,34 +80,33 @@
     <div class="projets-loader"></div>
     <div id="container"></div>
 
-    <!-- 
-        Fluent UI React v. 9 uses modern JavaScript syntax that is not supported in
-        Trident (Internet Explorer) or EdgeHTML (Edge Legacy), so this add-in won't
-        work in Office versions that use these webviews. The script below makes the 
-        following div display when an unsupported webview is in use, and hides the 
-        React container div. 
-    -->
-    <div id="tridentmessage" style="display: none; padding: 20px; background-color: #000; color: #fff;">
+    <div id="tridentmessage">
         <h2>Unsupported Browser</h2>
         <p>This add-in requires a modern web browser. Please upgrade either to perpetual Office 2021 (or later) 
         or to a Microsoft 365 account.</p>
     </div>
     <script>
+        // Detect unsupported browsers
         if ((navigator.userAgent.indexOf("Trident") !== -1) || (navigator.userAgent.indexOf("Edge") !== -1)) {
-            var tridentMessage = document.getElementById("tridentmessage");
-            var normalContainer = document.getElementById("container");
-            tridentMessage.style.display = "block";
-            normalContainer.style.display = "none";
+            document.getElementById("tridentmessage").style.display = "block";
+            document.getElementById("container").style.display = "none";
         } 
         
+        // Optimize Office.js loading
+        if (window.Office) {
+            Office.onReady(function() {
+                console.log('Office.js is ready');
+            });
+        }
+        
         // Remove loader when React app is loaded
-        window.addEventListener("load", function() {
+        window.addEventListener("DOMContentLoaded", function() {
             setTimeout(function() {
                 var loader = document.querySelector(".projets-loader");
-                if (loader) {
+                if (loader && document.getElementById("container").childNodes.length > 0) {
                     loader.style.display = "none";
                 }
-            }, 1000);
+            }, 500);
         });
     </script>
 </body>
