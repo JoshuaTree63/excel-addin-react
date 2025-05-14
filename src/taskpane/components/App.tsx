@@ -606,7 +606,7 @@ const App = () => {
                 justifyContent: "flex-start"
               }}
             >
-              Transportation Model
+              Photovoltaic (PV) Solar Farms
             </Button>
             
             <Button 
@@ -618,7 +618,103 @@ const App = () => {
                 justifyContent: "flex-start"
               }}
             >
-              PV Model
+              Toll Road Concessions
+            </Button>
+            
+            <Button 
+              appearance="outline"
+              style={{ 
+                backgroundColor: "white", 
+                color: "#000000", 
+                textAlign: "left",
+                justifyContent: "flex-start"
+              }}
+            >
+              Data Center
+            </Button>
+            
+            <Button 
+              appearance="outline"
+              style={{ 
+                backgroundColor: "white", 
+                color: "#000000", 
+                textAlign: "left",
+                justifyContent: "flex-start"
+              }}
+            >
+              High-Speed Rail Infrastructure
+            </Button>
+            
+            <Button 
+              appearance="outline"
+              style={{ 
+                backgroundColor: "white", 
+                color: "#000000", 
+                textAlign: "left",
+                justifyContent: "flex-start"
+              }}
+            >
+              Autonomous Freight Corridors
+            </Button>
+            
+            <Button 
+              appearance="outline"
+              style={{ 
+                backgroundColor: "white", 
+                color: "#000000", 
+                textAlign: "left",
+                justifyContent: "flex-start"
+              }}
+            >
+              LNG Regasification Terminals
+            </Button>
+            
+            <Button 
+              appearance="outline"
+              style={{ 
+                backgroundColor: "white", 
+                color: "#000000", 
+                textAlign: "left",
+                justifyContent: "flex-start"
+              }}
+            >
+              Smart Highway Infrastructure
+            </Button>
+            
+            <Button 
+              appearance="outline"
+              style={{ 
+                backgroundColor: "white", 
+                color: "#000000", 
+                textAlign: "left",
+                justifyContent: "flex-start"
+              }}
+            >
+              Desalination Plants
+            </Button>
+            
+            <Button 
+              appearance="outline"
+              style={{ 
+                backgroundColor: "white", 
+                color: "#000000", 
+                textAlign: "left",
+                justifyContent: "flex-start"
+              }}
+            >
+              Floating Solar Installations
+            </Button>
+            
+            <Button 
+              appearance="outline"
+              style={{ 
+                backgroundColor: "white", 
+                color: "#000000", 
+                textAlign: "left",
+                justifyContent: "flex-start"
+              }}
+            >
+              Seaport Logistics Hubs
             </Button>
           </div>
         </div>
