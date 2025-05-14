@@ -136,6 +136,7 @@ const useStyles = makeStyles({
 const App = () => {
   const styles = useStyles();
   const [selectedTab, setSelectedTab] = useState("read");
+  const [fullPluginMode, setFullPluginMode] = useState("main"); // Tracks the mode within Full Plugin tab
   
   // Read section
   const inputId = useId("input");
@@ -371,21 +372,20 @@ const App = () => {
     }
   };
 
+  // Handler for model selection
+  const handleSelectModel = () => {
+    setFullPluginMode("modelSelection");
+  };
+
+  // Handler to go back to main full plugin view
+  const handleBackToFullPlugin = () => {
+    setFullPluginMode("main");
+  };
+
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <Title3 className={styles.brandTitle}>
-          <span style={{ position: "relative" }}>
-            <span style={{ 
-              position: "absolute", 
-              fontSize: "50%", 
-              color: "#ffffff", 
-              top: "-8px", 
-              right: "-12px" 
-            }}>©</span>
-            ProJets
-          </span>
-        </Title3>
+        <Title3 className={styles.brandTitle}>ProJets</Title3>
       </div>
       
       <div className={styles.tabContainer}>
@@ -511,12 +511,117 @@ const App = () => {
         </Card>
       )}
 
-      {selectedTab === "full" && (
-        <Card className={styles.card}>
-          <div className={styles.formContent}>
-            {/* Empty content area for Full Plugin tab */}
+      {selectedTab === "full" && fullPluginMode === "main" && (
+        <div style={{ padding: "16px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "12px" }}>
+            <Button 
+              appearance="outline"
+              style={{ 
+                backgroundColor: "white", 
+                color: "#000000", 
+                textAlign: "left",
+                justifyContent: "flex-start"
+              }}
+              icon={<span style={{ marginRight: "8px" }}>🔍</span>}
+              onClick={handleSelectModel}
+            >
+              Select Model
+            </Button>
+            
+            <Button 
+              appearance="outline"
+              style={{ 
+                backgroundColor: "white", 
+                color: "#000000", 
+                textAlign: "left",
+                justifyContent: "flex-start"
+              }}
+              icon={<span style={{ marginRight: "8px" }}>➕</span>}
+            >
+              Insert Module
+            </Button>
+            
+            <Button 
+              appearance="outline"
+              style={{ 
+                backgroundColor: "white", 
+                color: "#000000", 
+                textAlign: "left",
+                justifyContent: "flex-start"
+              }}
+              icon={<span style={{ marginRight: "8px" }}>➖</span>}
+            >
+              Remove Module
+            </Button>
+            
+            <Button 
+              appearance="outline"
+              style={{ 
+                backgroundColor: "white", 
+                color: "#000000", 
+                textAlign: "left",
+                justifyContent: "flex-start"
+              }}
+              icon={<span style={{ marginRight: "8px" }}>🐍</span>}
+            >
+              Python AI Assistant
+            </Button>
+            
+            <Button 
+              appearance="outline"
+              style={{ 
+                backgroundColor: "white", 
+                color: "#000000", 
+                textAlign: "left",
+                justifyContent: "flex-start"
+              }}
+              icon={<span style={{ marginRight: "8px" }}>📊</span>}
+            >
+              Analyze Government Tenders
+            </Button>
           </div>
-        </Card>
+        </div>
+      )}
+
+      {selectedTab === "full" && fullPluginMode === "modelSelection" && (
+        <div style={{ padding: "16px" }}>
+          <div style={{ marginBottom: "16px", display: "flex", alignItems: "center" }}>
+            <Button 
+              appearance="subtle"
+              onClick={handleBackToFullPlugin}
+              style={{ marginRight: "12px" }}
+            >
+              ← Back
+            </Button>
+            <Text weight="semibold">Select a Model</Text>
+          </div>
+          
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "12px" }}>
+            <Button 
+              appearance="outline"
+              style={{ 
+                backgroundColor: "white", 
+                color: "#000000", 
+                textAlign: "left",
+                justifyContent: "flex-start"
+              }}
+            >
+              Transportation Model
+            </Button>
+            
+            <Button 
+              appearance="outline"
+              style={{ 
+                backgroundColor: "white", 
+                color: "#000000", 
+                textAlign: "left",
+                justifyContent: "flex-start"
+              }}
+            >
+              PV Model
+            </Button>
+          </div>
+        </div>
       )}
     </div>
   );
