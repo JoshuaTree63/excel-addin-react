@@ -13,14 +13,20 @@ import {
   Card, 
   Title3, 
   Text,
-  ProgressBar
+  ProgressBar,
+  shorthands
 } from "@fluentui/react-components";
 import { getCellAddress } from "../taskpane";
 import { useState } from "react";
 
+// ProJets brand color
+const brandColor = "#4B0DFF";
+const accentColor = "#FF6B00"; // Orange accent color from the image
+
 const useStyles = makeStyles({
   root: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#000000",
+    color: "#ffffff",
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
@@ -28,9 +34,26 @@ const useStyles = makeStyles({
   },
   header: {
     marginBottom: "16px",
+    color: brandColor,
+    borderBottom: `2px solid ${brandColor}`,
+    paddingBottom: "8px"
   },
   tabContainer: {
     marginBottom: "16px",
+  },
+  brandTab: {
+    color: "#ffffff",
+    "&:hover": {
+      color: accentColor,
+    },
+    "&[data-selected]": {
+      color: accentColor,
+      borderBottomColor: accentColor,
+    },
+  },
+  tabLabel: {
+    color: accentColor,
+    fontWeight: "600",
   },
   form: {
     display: "flex",
@@ -41,6 +64,9 @@ const useStyles = makeStyles({
   card: {
     padding: "16px",
     marginBottom: "16px",
+    borderTop: `3px solid ${brandColor}`,
+    backgroundColor: "#121212",
+    color: "#ffffff",
   },
   inputContainer: {
     display: "flex",
@@ -54,6 +80,17 @@ const useStyles = makeStyles({
     width: "100%",
     gap: "4px",
   },
+  label: {
+    color: "#ffffff",
+  },
+  input: {
+    backgroundColor: "#333333",
+    color: "#ffffff",
+    ...shorthands.border("1px", "solid", "#555555"),
+    ":focus-within": {
+      ...shorthands.border("1px", "solid", brandColor),
+    },
+  },
   formContent: {
     display: "flex",
     flexDirection: "column",
@@ -63,8 +100,18 @@ const useStyles = makeStyles({
   buttonContainer: {
     marginTop: "16px",
   },
+  primaryButton: {
+    backgroundColor: brandColor,
+    color: "white",
+    "&:hover": {
+      backgroundColor: `${brandColor}dd`,
+    },
+    "&:active": {
+      backgroundColor: `${brandColor}bb`,
+    },
+  },
   errorMessage: {
-    color: tokens.colorPaletteRedForeground1,
+    color: "#ff6b6b",
     fontSize: tokens.fontSizeBase200,
     marginTop: "8px",
   },
@@ -74,6 +121,12 @@ const useStyles = makeStyles({
   progressText: {
     fontSize: tokens.fontSizeBase200,
     marginBottom: "8px",
+    color: "#ffffff",
+  },
+  brandTitle: {
+    fontSize: "28px",
+    fontWeight: "bold",
+    color: brandColor,
   }
 });
 
@@ -318,13 +371,17 @@ const App = () => {
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <Title3>ProJets</Title3>
+        <Title3 className={styles.brandTitle}>ProJets</Title3>
       </div>
       
       <div className={styles.tabContainer}>
         <TabList selectedValue={selectedTab} onTabSelect={(_, data) => setSelectedTab(data.value as string)}>
-          <Tab value="read">Read Data</Tab>
-          <Tab value="write">Write Data</Tab>
+          <Tab className={styles.brandTab} value="read">
+            <span className={styles.tabLabel}>Read Data</span>
+          </Tab>
+          <Tab className={styles.brandTab} value="write">
+            <span className={styles.tabLabel}>Write Data</span>
+          </Tab>
         </TabList>
       </div>
       
@@ -333,32 +390,35 @@ const App = () => {
           <form className={styles.form} onSubmit={handleSubmitRead}>
             <div className={styles.formContent}>
               <div className={styles.inputWrapper}>
-                <Label htmlFor={targetUrlId}>Target URL</Label>
+                <Label className={styles.label} htmlFor={targetUrlId}>Target URL</Label>
                 <Input 
                   required 
                   id={targetUrlId} 
                   name="targetUrl" 
                   placeholder="https://your-api-endpoint.com/data"
+                  className={styles.input}
                 />
               </div>
               
               <div className={styles.inputContainer}>
                 <div className={styles.inputWrapper}>
-                  <Label htmlFor={inputId}>Parameter 1</Label>
+                  <Label className={styles.label} htmlFor={inputId}>Parameter 1</Label>
                   <Input 
                     required 
                     id={inputId} 
                     name="param_1" 
                     placeholder="Enter first parameter"
+                    className={styles.input}
                   />
                 </div>
                 <div className={styles.inputWrapper}>
-                  <Label htmlFor={inputId2}>Parameter 2</Label>
+                  <Label className={styles.label} htmlFor={inputId2}>Parameter 2</Label>
                   <Input 
                     required 
                     id={inputId2} 
                     name="param_2" 
                     placeholder="Enter second parameter"
+                    className={styles.input}
                   />
                 </div>
               </div>
@@ -368,6 +428,7 @@ const App = () => {
                   type="submit" 
                   appearance="primary" 
                   disabled={isReadLoading}
+                  className={styles.primaryButton}
                 >
                   {isReadLoading ? "Processing..." : "Read Workbook Data"}
                 </Button>
@@ -395,7 +456,7 @@ const App = () => {
           <form className={styles.form} onSubmit={handleSubmitWrite}>
             <div className={styles.formContent}>
               <div className={styles.inputWrapper}>
-                <Label htmlFor={textAreaId}>JSON Data</Label>
+                <Label className={styles.label} htmlFor={textAreaId}>JSON Data</Label>
                 <Textarea 
                   resize="vertical" 
                   required 
@@ -403,6 +464,7 @@ const App = () => {
                   name="textArea" 
                   placeholder="Paste your JSON data here..."
                   style={{ minHeight: "200px" }}
+                  className={styles.input}
                 />
               </div>
               
@@ -411,6 +473,7 @@ const App = () => {
                   type="submit" 
                   appearance="primary" 
                   disabled={isWriteLoading}
+                  className={styles.primaryButton}
                 >
                   {isWriteLoading ? (
                     <>
