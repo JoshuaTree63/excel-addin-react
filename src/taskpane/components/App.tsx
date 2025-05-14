@@ -374,7 +374,18 @@ const App = () => {
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <Title3 className={styles.brandTitle}>ProJets</Title3>
+        <Title3 className={styles.brandTitle}>
+          <span style={{ position: "relative" }}>
+            <span style={{ 
+              position: "absolute", 
+              fontSize: "50%", 
+              color: "#ffffff", 
+              top: "-8px", 
+              right: "-12px" 
+            }}>©</span>
+            ProJets
+          </span>
+        </Title3>
       </div>
       
       <div className={styles.tabContainer}>
@@ -384,6 +395,9 @@ const App = () => {
           </Tab>
           <Tab className={styles.brandTab} value="write">
             <span className={styles.tabLabel}>Write Data</span>
+          </Tab>
+          <Tab className={styles.brandTab} value="full">
+            <span className={styles.tabLabel}>Full Plugin</span>
           </Tab>
         </TabList>
       </div>
@@ -494,6 +508,14 @@ const App = () => {
               )}
             </div>
           </form>
+        </Card>
+      )}
+
+      {selectedTab === "full" && (
+        <Card className={styles.card}>
+          <div className={styles.formContent}>
+            {/* Empty content area for Full Plugin tab */}
+          </div>
         </Card>
       )}
     </div>
