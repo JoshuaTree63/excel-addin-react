@@ -1,9 +1,21 @@
-"""
-Time Assumptions Module
+import datetime
+import typing
 
-This module contains time-related assumptions for the project, including:
-- Project timeline
-- Construction periods
-- Operation periods
-- Key milestones
-""" 
+from sheets.scenarios.scenario_table import ScenarioTable
+
+from ..base_table import BaseTable, TABLE_HEADER_STYLE
+from ..item import TableItem, TableItemStyle
+from .table_entry import ScenarioTableEntry
+
+
+class TimeAssumptionsTable(ScenarioTable):
+    def __init__(self, parent, base_location) -> None:
+        super().__init__(parent=parent, name="Time Assumptions", base_location=base_location)
+
+        self._member_name_value_map = dict(
+            start_date="Start Date",
+            concession_duration="Concession Duration",
+            construction_duration="Construction Duration",
+            operations_duration="Operations Duration",
+            end_of_licance="End of Licance",
+        ) 

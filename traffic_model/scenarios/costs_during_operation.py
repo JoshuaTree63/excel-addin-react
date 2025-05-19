@@ -14,5 +14,5 @@ class CostsDuringOperationTable(ScenarioTable):
 
         self._member_name_value_map = dict(
             maintenance_including_heavy_maintenance_and_spv_costs="Maintenance (including heavy maintenance & SPV costs)",
-            inflation_per_year_costs="Inflation per year (costs) from beginning of concession",
+            inflation_per_year_costs_from_beginning_of_concession="Inflation per year (costs) from beginning of concession",
         ) 
