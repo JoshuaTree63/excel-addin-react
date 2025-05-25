@@ -19,6 +19,7 @@ import {
 import { getCellAddress } from "../taskpane";
 import { useState } from "react";
 
+
 // ProJets brand color
 const brandColor = "#4B0DFF";
 const accentColor = "#FF6B00"; // Orange accent color from the image
@@ -137,7 +138,7 @@ const App = () => {
   const styles = useStyles();
   const [selectedTab, setSelectedTab] = useState("read");
   const [fullPluginMode, setFullPluginMode] = useState("main"); // Tracks the mode within Full Plugin tab
-  
+
   // Read section
   const inputId = useId("input");
   const inputId2 = useId("input");
@@ -178,79 +179,90 @@ const App = () => {
     try {
       const workbook = await Excel.run(async (context) => {
         var sheets = context.workbook.worksheets;
-        sheets.load("items");
-        await context.sync();
 
         const worksheets = [];
+        var worksheet = sheets.getLast();
 
-        for (var worksheet of sheets.items) {
+        do {
           resetProcessedRows();
           incrementWorksheet();
+          worksheet.load("name")
 
-          const usedRange = worksheet.getUsedRange();
-          usedRange.load();
-          const usedRow = usedRange.getLastRow();
-          const usedCol = usedRange.getLastColumn();
-
-          usedRow.load("rowIndex");
-          usedCol.load("columnIndex");
+          var usedRange = worksheet.getUsedRange();
+          var lastColumn = usedRange.getLastColumn();
+          var lastRow = usedRange.getLastRow();
+          lastColumn.load("columnIndex");
+          lastRow.load("RowIndex");
           await context.sync();
 
-          const range = worksheet.getRangeByIndexes(0, 0, usedRow.rowIndex + 1, usedCol.columnIndex);
+          const range = worksheet.getRangeByIndexes(0, 0, lastRow.rowIndex, lastColumn.columnIndex);
+          usedRange.untrack();
+          lastColumn.untrack();
+          lastRow.untrack();
+
           range.load([
-            "values",
-            "formulas",
-            "formulasR1C1",
-            "address",
-            "numberFormat",
-            "format/font",
-            "rowCount",
             "columnCount",
+            "formulasR1C1",
+            "numberFormat",
+            "rowCount",
           ]);
-
+          var properties = range.getCellProperties({
+            address: true,
+            format: {
+              fill: {
+                color: true
+              },
+              font: {
+                bold: true,
+                color: true,
+                italic: true,
+                name: true,
+                size: true,
+                strikethrough: true,
+                underline: true
+              }
+            }
+          });
           await context.sync();
 
-          const addresses = range.address.split(":")[0].split("!")[1]; // Get starting address
-          const baseColumn = addresses.replace(/[0-9]/g, "");
-          const baseRow = parseInt(addresses.replace(/[^0-9]/g, ""));
           const worksheetData = {
             name: worksheet.name,
             cells: {},
           };
+
           setWorksheetRows(range.rowCount);
           for (let row = 0; row < range.rowCount; row++) {
             incrementProcessedRows();
             for (let col = 0; col < range.columnCount; col++) {
-              const cellAddress = getCellAddress(baseColumn, baseRow, row, col);
-              const cellFont = range.getCell(row, col).format.font;
-              const cellFill = range.getCell(row, col).format.fill;
-              cellFont.load(["bold", "color", "italic", "name", "size", "underline", "backgroundColor"]);
-              cellFill.load(["color"]);
-              await context.sync();
-
               const cellData = {
                 formulaR1C1: range.formulasR1C1[row][col],
-                address: cellAddress,
+                address: properties.value[row][col].address,
                 rowIndex: row,
-                columnIndex: col,                
+                columnIndex: col,
                 format: {
                   font: {
-                    name: cellFont.name,
-                    size: cellFont.size,
-                    bold: cellFont.bold,
-                    italic: cellFont.italic,
-                    underline: cellFont.underline,
-                    color: cellFont.color,
+                    bold: properties.value[row][col].format.font.bold,
+                    color: properties.value[row][col].format.font.color,
+                    italic: properties.value[row][col].format.font.italic,
+                    name: properties.value[row][col].format.font.name,
+                    size: properties.value[row][col].format.font.size,
+                    strikethrough: properties.value[row][col].format.font.strikethrough,
+                    underline: properties.value[row][col].format.font.underline,
                   },
                   numberFormat: range.numberFormat[row][col],
-                  backgroundColor: cellFill.color,
+                  backgroundColor: properties.value[row][col].format.fill.color,
                 },
               };
-              worksheetData.cells[cellAddress] = cellData;
+              worksheetData.cells[properties.value[row][col].address] = cellData;
+
             }
           }
           worksheets.push(worksheetData);
-        }
+          console.log(worksheetData);
+
+          range.untrack();
+          await context.sync();
+        } while (worksheet = worksheet.getPrevious());
         console.log(worksheets);
         return worksheets;
       });
@@ -359,7 +371,7 @@ const App = () => {
     setIsWriteLoading(true);
     setWriteErrorMessage("");
     e.preventDefault();
-    
+
     try {
       const formData = new FormData(e.currentTarget);
       const textArea = formData.get("textArea");
