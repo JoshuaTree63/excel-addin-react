@@ -175,32 +175,9 @@ const App = () => {
 
   const readWorkbook = async () => {
     resetProgress();
-
-    try {
-      const workbook = await Excel.run(async (context) => {
-        var sheets = context.workbook.worksheets;
-
-        const worksheets = [];
-        var worksheet = sheets.getLast();
-
-        do {
-          resetProcessedRows();
-          incrementWorksheet();
-          worksheet.load("name")
-
-          var usedRange = worksheet.getUsedRange();
-          var lastColumn = usedRange.getLastColumn();
-          var lastRow = usedRange.getLastRow();
-          lastColumn.load("columnIndex");
-          lastRow.load("RowIndex");
-          await context.sync();
-
-          const range = worksheet.getRangeByIndexes(0, 0, lastRow.rowIndex, lastColumn.columnIndex);
-          usedRange.untrack();
-          lastColumn.untrack();
-          lastRow.untrack();
-
-          range.load([
+  
+  const readRange = async (worksheetData, range) => {
+    range.load([
             "columnCount",
             "formulasR1C1",
             "numberFormat",
@@ -223,16 +200,9 @@ const App = () => {
               }
             }
           });
-          await context.sync();
+          await range.context.sync();
 
-          const worksheetData = {
-            name: worksheet.name,
-            cells: {},
-          };
-
-          setWorksheetRows(range.rowCount);
           for (let row = 0; row < range.rowCount; row++) {
-            incrementProcessedRows();
             for (let col = 0; col < range.columnCount; col++) {
               const cellData = {
                 formulaR1C1: range.formulasR1C1[row][col],
@@ -257,12 +227,75 @@ const App = () => {
 
             }
           }
-          worksheets.push(worksheetData);
-          console.log(worksheetData);
 
-          range.untrack();
+          return worksheetData;
+  }
+
+    try {
+      const workbook = await Excel.run(async (context) => {
+        var sheets = context.workbook.worksheets;
+
+        const worksheets = [];
+        var worksheet = sheets.getFirst();
+
+        do {
           await context.sync();
-        } while (worksheet = worksheet.getPrevious());
+          if (worksheet.isNullObject) {
+            break;
+          }
+          resetProcessedRows();
+          incrementWorksheet();
+          worksheet.load("name")
+
+          var usedRange = worksheet.getUsedRange();
+          var lastColumn = usedRange.getLastColumn();
+          var lastRow = usedRange.getLastRow();
+          lastColumn.load("columnIndex");
+          lastRow.load("RowIndex");
+          await context.sync();
+
+          var worksheetData = {
+            name: worksheet.name,
+            cells: {},
+          };
+
+          var rowsCount = lastRow.rowIndex;
+          var columnsCount = lastColumn.columnIndex;
+          usedRange.untrack();
+          lastColumn.untrack();
+          lastRow.untrack();
+
+          var currentRow = 0;
+          var currentColumn = 0;
+          setWorksheetRows(rowsCount);
+
+          const COLUMN_CHUNK_SIZE = 100;
+          const ROW_CHUNK_SIZE = 2;
+
+          while (currentRow < rowsCount) {
+            let lastRowIndex = Math.min(currentRow + ROW_CHUNK_SIZE, rowsCount);
+            currentColumn = 0;
+            while (currentColumn < columnsCount) {
+              let lastColumnIndex = Math.min(currentColumn + COLUMN_CHUNK_SIZE, columnsCount);
+              const range = worksheet.getRangeByIndexes(currentRow, currentColumn, lastRowIndex - currentRow, lastColumnIndex - currentColumn);
+              worksheetData = await readRange(worksheetData, range);
+              range.untrack();
+              await context.sync();
+
+              currentColumn = lastColumnIndex;
+            }
+            currentRow = lastRowIndex;
+            incrementProcessedRows();
+            incrementProcessedRows();
+          }
+
+          if (lastRow.rowIndex == 0)
+          {
+            continue;
+          }
+
+          worksheets.push(worksheetData);
+        } while (worksheet = worksheet.getNextOrNullObject());
         console.log(worksheets);
         return worksheets;
       });
